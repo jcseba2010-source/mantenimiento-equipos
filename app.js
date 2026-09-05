@@ -59,8 +59,59 @@ $('equipo_empresa_id').onchange=updateSedeSelect;
 function renderEmpresas(){
  $('tablaEmpresas').innerHTML=empresas.map(e=>`<tr><td><b>${esc(e.razon_social)}</b></td><td>${esc(e.nit||'-')}</td><td>${esc(e.ciudad||'-')}</td><td>${esc(e.contacto_principal||'-')}</td><td>${esc(e.telefono||'-')}</td><td><span class="badge">${esc(e.estado)}</span></td><td><button class="btn" onclick="openEmpresa('${e.id}')">Editar</button></td></tr>`).join('');
 }
+
 function renderSedes(){
- $('tablaSedes').innerHTML=sedes.map(s=>{let e=empresas.find(x=>x.id===s.empresa_id);return `<tr><td>${esc(e?.razon_social||'-')}</td><td><b>${esc(s.nombre)}</b></td><td>${esc(s.ciudad||'-')}</td><td>${esc(s.direccion||'-')}</td><td>${esc(s.responsable||'-')}</td><td><button class="btn" onclick="openSede('${s.id}')">Editar</button></td></tr>`}).join('');
+  $('tablaSedes').innerHTML = sedes.map(s => {
+    let e = empresas.find(x => x.id === s.empresa_id);
+
+    return `
+      <tr>
+        <td>${esc(e?.razon_social || '-')}</td>
+        <td><b>${esc(s.nombre)}</b></td>
+        <td>${esc(s.ciudad || '-')}</td>
+        <td>${esc(s.direccion || '-')}</td>
+        <td>${esc(s.responsable || '-')}</td>
+        <td>
+          <button class="btn" onclick="openSede('${s.id}')">
+            Editar
+          </button>
+
+          <button class="btn" onclick="eliminarSede('${s.id}')">
+            Eliminar
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+async function eliminarSede(id){
+
+  const sede = sedes.find(s => s.id === id);
+
+  if(!sede){
+    alert('No se encontró la sede.');
+    return;
+  }
+
+  const confirmar = confirm(
+    `¿Seguro que deseas eliminar la sede "${sede.nombre}"?`
+  );
+
+  if(!confirmar) return;
+
+  const { error } = await sb
+    .from('sedes')
+    .delete()
+    .eq('id', id);
+
+  if(error){
+    alert('No se pudo eliminar la sede: ' + error.message);
+    return;
+  }
+
+  alert('Sede eliminada correctamente.');
+
+  await cargarDatos();
 }
 function renderEquipos(){
  let q=$('buscarEquipo').value.toLowerCase().trim(),fe=$('filtroEmpresa').value;
