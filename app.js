@@ -83,6 +83,54 @@ async function cargarTodo(){
  renderEmpresas();
  renderSedes();
  renderEquipos();
+ async function eliminarEquipo(id){
+
+  const equipo = equipos.find(e => e.id === id);
+
+  if(!equipo){
+    alert('No se encontró el equipo.');
+    return;
+  }
+
+  const confirmar = confirm(
+    `¿Seguro que deseas eliminar el equipo "${equipo.nombre}"?`
+  );
+
+  if(!confirmar) return;
+
+  const {count,error:checkError} = await sb
+    .from('ordenes_trabajo')
+    .select('id',{count:'exact',head:true})
+    .eq('equipo_id',id);
+
+  if(checkError){
+    alert('No se pudo verificar el equipo: ' + checkError.message);
+    return;
+  }
+
+  if(count > 0){
+    alert(
+      'No se puede eliminar este equipo porque tiene órdenes de mantenimiento asociadas.'
+    );
+    return;
+  }
+
+  const {error} = await sb
+    .from('equipos')
+    .delete()
+    .eq('id',id);
+
+  if(error){
+    alert('No se pudo eliminar el equipo: ' + error.message);
+    return;
+  }
+
+  alert('Equipo eliminado correctamente.');
+
+  await cargarTodo();
+}
+
+window.eliminarEquipo = eliminarEquipo;
  fillSelects();
 }
 
@@ -206,7 +254,14 @@ async function eliminarSede(id){
 window.eliminarSede=eliminarSede;
 
 function renderEquipos(){
+ <button class="btn" onclick="openEquipo('${e.id}')">
+  Editar
+</button>
 
+ <button class="btn" onclick="eliminarEquipo('${e.id}')">
+  Eliminar
+</button>
+ 
  let q=$('buscarEquipo').value.toLowerCase().trim();
  let fe=$('filtroEmpresa').value;
 
