@@ -142,7 +142,28 @@ function openSede(id=''){
 } window.openSede=openSede;
 
 $('sedeForm').onsubmit=async e=>{
- e.preventDefault();let data={empresa_id:$('sede_empresa_id').value,nombre:$('sede_nombre').value.trim(),ciudad:$('sede_ciudad').value.trim()||null,direccion:$('sede_direccion').value.trim()||null,telefono:$('sede_telefono').value.trim()||null,responsable:$('sede_responsable').value.trim()||null,correo:$('sede_correo').value.trim()||null,estado:$('sede_estado').value};let id=$('sedeId').value;let r=id?await sb.from('sedes').update(data).eq('id',id):await sb.from('sedes').insert(data);if(r.error)return alert(r.error.message);closeModal('sedeModal');await cargarTodo();
+ e.preventDefault();let data={empresa_id:$('sede_empresa_id').value,nombre:$('sede_nombre').value.trim(),ciudad:$('sede_ciudad').value.trim()||null,direccion:$('sede_direccion').value.trim()||null,telefono:$('sede_telefono').value.trim()||null,responsable:$('sede_responsable').value.trim()||null,correo:$('sede_correo').value.trim()||null,estado:$('sede_estado').value};let id=$('sedeId').value;
+const nombreNormalizado = (data.nombre || '').trim().toLowerCase();
+
+const sedeDuplicada = sedes.some(s =>
+  s.empresa_id === data.empresa_id &&
+  (s.nombre || '').trim().toLowerCase() === nombreNormalizado
+);
+
+if (sedeDuplicada) {
+  alert('Esta sede ya existe para la empresa seleccionada.');
+  return;
+}
+
+let r = await sb.from('sedes').insert(data);
+
+if (r.error) {
+  return alert(r.error.message);
+}
+
+closeModal('sedeModal');
+
+await cargarTodo(); 
 };
 
 function openEquipo(id=''){
