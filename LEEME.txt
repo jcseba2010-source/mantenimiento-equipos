@@ -1,0 +1,26 @@
+SISTEMA DE GESTIÓN DE MANTENIMIENTO - VERSIÓN 2 SUPABASE
+
+Esta versión ya trabaja en línea con Supabase.
+
+Incluye:
+- Inicio de sesión con Supabase Auth
+- Perfil de usuario
+- Empresas / clientes
+- Sedes
+- Equipos
+- Datos compartidos entre distintos computadores y celulares
+- Panel general
+
+PRUEBA:
+1. Descomprima este ZIP.
+2. Abra index.html en Chrome o Edge.
+3. Inicie sesión con el usuario administrador creado en Supabase.
+4. Registre primero una empresa.
+5. Registre una sede.
+6. Registre un equipo.
+
+IMPORTANTE:
+- La publishable key puede estar en una aplicación web.
+- Nunca coloque una secret key o service_role key en estos archivos.
+- Para uso final se recomienda publicar por HTTPS (por ejemplo GitHub Pages).
+- La próxima versión añadirá órdenes, técnicos y fotos de mantenimiento.

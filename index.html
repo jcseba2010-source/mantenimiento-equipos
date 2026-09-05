@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sistema de Gestión de Mantenimiento</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<section id="loginView" class="login-wrap">
+  <div class="login-card">
+    <h1>Sistema de Gestión de Mantenimiento</h1>
+    <p>Acceso de administradores, supervisores y técnicos</p>
+    <form id="loginForm">
+      <label>Correo electrónico<input id="loginEmail" type="email" required></label>
+      <label>Contraseña<input id="loginPassword" type="password" required></label>
+      <button class="primary full" type="submit">INGRESAR</button>
+      <p id="loginMsg" class="msg"></p>
+    </form>
+  </div>
+</section>
+
+<section id="appView" class="hidden">
+<header>
+  <div>
+    <h1>Sistema de Gestión de Mantenimiento</h1>
+    <p id="userInfo">Usuario</p>
+  </div>
+  <button onclick="logout()">Cerrar sesión</button>
+</header>
+
+<nav>
+  <button data-view="inicio" class="active">Inicio</button>
+  <button data-view="empresas">Empresas</button>
+  <button data-view="sedes">Sedes</button>
+  <button data-view="equipos">Equipos</button>
+  <button data-view="mantenimientos">Mantenimientos</button>
+</nav>
+
+<main>
+<section id="inicio" class="view active">
+  <div class="stats">
+    <div class="card"><span>Empresas</span><strong id="statEmpresas">0</strong></div>
+    <div class="card"><span>Sedes</span><strong id="statSedes">0</strong></div>
+    <div class="card"><span>Equipos</span><strong id="statEquipos">0</strong></div>
+    <div class="card"><span>Órdenes abiertas</span><strong id="statOrdenes">0</strong></div>
+  </div>
+  <div class="card">
+    <h2>Panel principal</h2>
+    <p>La información de esta versión se almacena directamente en Supabase y puede ser consultada desde distintos computadores o celulares.</p>
+  </div>
+</section>
+
+<section id="empresas" class="view">
+  <div class="section-head">
+    <div><h2>Empresas / Clientes</h2><p>Administre las empresas a las que presta mantenimiento.</p></div>
+    <button class="primary" onclick="openEmpresa()">+ Nueva empresa</button>
+  </div>
+  <div class="card table-wrap">
+    <table>
+      <thead><tr><th>Razón social</th><th>NIT</th><th>Ciudad</th><th>Contacto</th><th>Teléfono</th><th>Estado</th><th>Acciones</th></tr></thead>
+      <tbody id="tablaEmpresas"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="sedes" class="view">
+  <div class="section-head">
+    <div><h2>Sedes</h2><p>Una empresa puede tener una o varias sedes.</p></div>
+    <button class="primary" onclick="openSede()">+ Nueva sede</button>
+  </div>
+  <div class="card table-wrap">
+    <table>
+      <thead><tr><th>Empresa</th><th>Sede</th><th>Ciudad</th><th>Dirección</th><th>Responsable</th><th>Acciones</th></tr></thead>
+      <tbody id="tablaSedes"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="equipos" class="view">
+  <div class="section-head">
+    <div><h2>Equipos</h2><p>Equipos registrados por empresa y sede.</p></div>
+    <button class="primary" onclick="openEquipo()">+ Nuevo equipo</button>
+  </div>
+  <div class="card filters">
+    <input id="buscarEquipo" placeholder="Buscar por código, nombre, marca o ubicación">
+    <select id="filtroEmpresa"><option value="">Todas las empresas</option></select>
+  </div>
+  <div class="card table-wrap">
+    <table>
+      <thead><tr><th>Código</th><th>Equipo</th><th>Empresa</th><th>Sede</th><th>Ubicación</th><th>Estado</th><th>Próximo mantenimiento</th><th>Acciones</th></tr></thead>
+      <tbody id="tablaEquipos"></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="mantenimientos" class="view">
+  <div class="card">
+    <h2>Mantenimientos</h2>
+    <p>La siguiente versión incorporará órdenes preventivas/correctivas, asignación de técnicos y fotos antes/después.</p>
+  </div>
+</section>
+</main>
+</section>
+
+<div id="empresaModal" class="modal hidden">
+<div class="modal-box">
+<div class="modal-head"><h2 id="empresaTitle">Nueva empresa</h2><button onclick="closeModal('empresaModal')">✕</button></div>
+<form id="empresaForm">
+<input type="hidden" id="empresaId">
+<div class="grid">
+<label>Razón social<input id="razon_social" required></label>
+<label>NIT<input id="nit"></label>
+<label>Contacto principal<input id="contacto_principal"></label>
+<label>Teléfono<input id="empresa_telefono"></label>
+<label>Correo<input id="empresa_correo" type="email"></label>
+<label>Ciudad<input id="empresa_ciudad"></label>
+<label>Dirección<input id="empresa_direccion"></label>
+<label>Estado<select id="empresa_estado"><option>Activa</option><option>Inactiva</option></select></label>
+</div>
+<label>Observaciones<textarea id="empresa_observaciones" rows="3"></textarea></label>
+<div class="actions"><button type="button" onclick="closeModal('empresaModal')">Cancelar</button><button class="primary" type="submit">Guardar</button></div>
+</form>
+</div>
+</div>
+
+<div id="sedeModal" class="modal hidden">
+<div class="modal-box">
+<div class="modal-head"><h2 id="sedeTitle">Nueva sede</h2><button onclick="closeModal('sedeModal')">✕</button></div>
+<form id="sedeForm">
+<input type="hidden" id="sedeId">
+<div class="grid">
+<label>Empresa<select id="sede_empresa_id" required></select></label>
+<label>Nombre de la sede<input id="sede_nombre" required></label>
+<label>Ciudad<input id="sede_ciudad"></label>
+<label>Dirección<input id="sede_direccion"></label>
+<label>Teléfono<input id="sede_telefono"></label>
+<label>Responsable<input id="sede_responsable"></label>
+<label>Correo<input id="sede_correo" type="email"></label>
+<label>Estado<select id="sede_estado"><option>Activa</option><option>Inactiva</option></select></label>
+</div>
+<div class="actions"><button type="button" onclick="closeModal('sedeModal')">Cancelar</button><button class="primary" type="submit">Guardar</button></div>
+</form>
+</div>
+</div>
+
+<div id="equipoModal" class="modal hidden">
+<div class="modal-box">
+<div class="modal-head"><h2 id="equipoTitle">Nuevo equipo</h2><button onclick="closeModal('equipoModal')">✕</button></div>
+<form id="equipoForm">
+<input type="hidden" id="equipoId">
+<div class="grid">
+<label>Empresa<select id="equipo_empresa_id" required></select></label>
+<label>Sede<select id="equipo_sede_id"><option value="">Sin sede</option></select></label>
+<label>Código interno<input id="codigo_interno" required></label>
+<label>Nombre del equipo<input id="equipo_nombre" required></label>
+<label>Tipo<input id="equipo_tipo" required></label>
+<label>Marca<input id="equipo_marca"></label>
+<label>Modelo<input id="equipo_modelo"></label>
+<label>Número de serie<input id="numero_serie"></label>
+<label>Ubicación<input id="equipo_ubicacion"></label>
+<label>Responsable<input id="equipo_responsable"></label>
+<label>Estado<select id="equipo_estado"><option>Operativo</option><option>En mantenimiento</option><option>Fuera de servicio</option><option>Pendiente de revisión</option></select></label>
+<label>Fecha compra<input id="fecha_compra" type="date"></label>
+<label>Último mantenimiento<input id="ultimo_mantenimiento" type="date"></label>
+<label>Próximo mantenimiento<input id="proximo_mantenimiento" type="date"></label>
+<label>Periodicidad (días)<input id="periodicidad_dias" type="number" min="1"></label>
+</div>
+<label>Observaciones<textarea id="equipo_observaciones" rows="3"></textarea></label>
+<div class="actions"><button type="button" onclick="closeModal('equipoModal')">Cancelar</button><button class="primary" type="submit">Guardar</button></div>
+</form>
+</div>
+</div>
+
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
