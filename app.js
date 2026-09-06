@@ -202,6 +202,34 @@ $('mant_sede_id').onchange = function(){
       `<option value="${e.id}">${esc(e.codigo_interno)} - ${esc(e.nombre)}</option>`
     ).join('');
 };
+$('mantenimientoForm').onsubmit = async function(e){
+  e.preventDefault();
+
+  const data = {
+    empresa_id: $('mant_empresa_id').value,
+    sede_id: $('mant_sede_id').value,
+    equipo_id: $('mant_equipo_id').value,
+    tecnico_id: $('mant_tecnico_id').value || null,
+    tipo_mantenimiento: $('mant_tipo').value,
+    prioridad: $('mant_prioridad').value,
+    estado: $('mant_estado').value,
+    fecha_programada: $('mant_fecha_programada').value || null,
+    descripcion_falla: $('mant_descripcion').value.trim() || null
+  };
+
+  const { error } = await sb
+    .from('ordenes_trabajo')
+    .insert(data);
+
+  if(error){
+    return alert('No se pudo guardar la orden: ' + error.message);
+  }
+
+  alert('✅ Orden de mantenimiento creada correctamente.');
+
+  closeModal('mantenimientoModal');
+  await cargarTodo();
+};
 $('equipoForm').onsubmit=async e=>{
  e.preventDefault();let data={empresa_id:$('equipo_empresa_id').value,sede_id:$('equipo_sede_id').value||null,codigo_interno:$('codigo_interno').value.trim(),nombre:$('equipo_nombre').value.trim(),tipo:$('equipo_tipo').value.trim(),marca:$('equipo_marca').value.trim()||null,modelo:$('equipo_modelo').value.trim()||null,numero_serie:$('numero_serie').value.trim()||null,ubicacion:$('equipo_ubicacion').value.trim()||null,responsable:$('equipo_responsable').value.trim()||null,estado:$('equipo_estado').value,fecha_compra:$('fecha_compra').value||null,ultimo_mantenimiento:$('ultimo_mantenimiento').value||null,proximo_mantenimiento:$('proximo_mantenimiento').value||null,periodicidad_dias:$('periodicidad_dias').value?Number($('periodicidad_dias').value):null,observaciones:$('equipo_observaciones').value.trim()||null};let id=$('equipoId').value;let r=id?await sb.from('equipos').update(data).eq('id',id):await sb.from('equipos').insert(data); if(r.error){
   if(r.error.code==='23505'){
