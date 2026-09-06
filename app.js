@@ -214,7 +214,7 @@ $('mantenimientoForm').onsubmit = async function(e){
     prioridad: $('mant_prioridad').value,
     estado: $('mant_estado').value,
     fecha_programada: $('mant_fecha_programada').value || null,
-    descripcion_falla: $('mant_descripcion').value.trim() || null
+    falla_reportada: $('mant_descripcion').value.trim() || null
   };
 
   const { error } = await sb
