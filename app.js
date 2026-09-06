@@ -81,17 +81,28 @@ async function eliminarEquipo(id){
 
   if(!confirmar) return;
 
-  const { count, error: checkError } = await sb
+  const { count: ordenesCount, error: ordenesError } = await sb
     .from('ordenes_trabajo')
     .select('id', { count: 'exact', head: true })
     .eq('equipo_id', id);
 
-  if(checkError){
-    return alert('No se pudo verificar el equipo: ' + checkError.message);
+  if(ordenesError){
+    return alert('No se pudo verificar las órdenes del equipo: ' + ordenesError.message);
   }
 
-  if(count > 0){
-    return alert('⚠️ Este equipo tiene mantenimientos registrados y no puede eliminarse.');
+  const { count: historialCount, error: historialError } = await sb
+    .from('historial_mantenimiento')
+    .select('id', { count: 'exact', head: true })
+    .eq('equipo_id', id);
+
+  if(historialError){
+    return alert('No se pudo verificar el historial del equipo: ' + historialError.message);
+  }
+
+  if((ordenesCount || 0) > 0 || (historialCount || 0) > 0){
+    return alert(
+      '⚠️ Este equipo tiene mantenimientos o historial registrado y no puede eliminarse.'
+    );
   }
 
   const { error } = await sb
@@ -108,7 +119,6 @@ async function eliminarEquipo(id){
 }
 
 window.eliminarEquipo = eliminarEquipo;
-
 $('buscarEquipo').oninput=renderEquipos;$('filtroEmpresa').onchange=renderEquipos;
 
 function closeModal(id){$(id).classList.add('hidden')} window.closeModal=closeModal;
