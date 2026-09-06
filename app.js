@@ -101,6 +101,11 @@ function openEquipo(id=''){
 } window.openEquipo=openEquipo;
 
 $('equipoForm').onsubmit=async e=>{
- e.preventDefault();let data={empresa_id:$('equipo_empresa_id').value,sede_id:$('equipo_sede_id').value||null,codigo_interno:$('codigo_interno').value.trim(),nombre:$('equipo_nombre').value.trim(),tipo:$('equipo_tipo').value.trim(),marca:$('equipo_marca').value.trim()||null,modelo:$('equipo_modelo').value.trim()||null,numero_serie:$('numero_serie').value.trim()||null,ubicacion:$('equipo_ubicacion').value.trim()||null,responsable:$('equipo_responsable').value.trim()||null,estado:$('equipo_estado').value,fecha_compra:$('fecha_compra').value||null,ultimo_mantenimiento:$('ultimo_mantenimiento').value||null,proximo_mantenimiento:$('proximo_mantenimiento').value||null,periodicidad_dias:$('periodicidad_dias').value?Number($('periodicidad_dias').value):null,observaciones:$('equipo_observaciones').value.trim()||null};let id=$('equipoId').value;let r=id?await sb.from('equipos').update(data).eq('id',id):await sb.from('equipos').insert(data);if(r.error)return alert(r.error.message);closeModal('equipoModal');await cargarTodo();
+ e.preventDefault();let data={empresa_id:$('equipo_empresa_id').value,sede_id:$('equipo_sede_id').value||null,codigo_interno:$('codigo_interno').value.trim(),nombre:$('equipo_nombre').value.trim(),tipo:$('equipo_tipo').value.trim(),marca:$('equipo_marca').value.trim()||null,modelo:$('equipo_modelo').value.trim()||null,numero_serie:$('numero_serie').value.trim()||null,ubicacion:$('equipo_ubicacion').value.trim()||null,responsable:$('equipo_responsable').value.trim()||null,estado:$('equipo_estado').value,fecha_compra:$('fecha_compra').value||null,ultimo_mantenimiento:$('ultimo_mantenimiento').value||null,proximo_mantenimiento:$('proximo_mantenimiento').value||null,periodicidad_dias:$('periodicidad_dias').value?Number($('periodicidad_dias').value):null,observaciones:$('equipo_observaciones').value.trim()||null};let id=$('equipoId').value;let r=id?await sb.from('equipos').update(data).eq('id',id):await sb.from('equipos').insert(data); if(r.error){
+  if(r.error.code==='23505'){
+    return alert('⚠️ Este código de equipo ya existe en esta empresa. Utilice otro código.');
+  }
+  return alert(r.error.message);
+} closeModal('equipoModal');await cargarTodo();
 };
 init();
