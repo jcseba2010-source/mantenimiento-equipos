@@ -132,7 +132,99 @@
   </div>
 
 </section>
+<div id="mantenimientoModal" class="modal hidden">
+  <div class="modal-box">
 
+    <div class="modal-head">
+      <h2 id="mantenimientoTitle">Nueva orden de mantenimiento</h2>
+      <button onclick="closeModal('mantenimientoModal')">X</button>
+    </div>
+
+    <form id="mantenimientoForm">
+
+      <input type="hidden" id="mantenimientoId">
+
+      <div class="grid">
+
+        <label>
+          Tipo de mantenimiento
+          <select id="mant_tipo" required>
+            <option value="">Seleccione</option>
+            <option value="Preventivo">Preventivo</option>
+            <option value="Correctivo">Correctivo</option>
+          </select>
+        </label>
+
+        <label>
+          Empresa
+          <select id="mant_empresa_id" required></select>
+        </label>
+
+        <label>
+          Sede
+          <select id="mant_sede_id" required></select>
+        </label>
+
+        <label>
+          Equipo
+          <select id="mant_equipo_id" required></select>
+        </label>
+
+        <label>
+          Técnico
+          <select id="mant_tecnico_id">
+            <option value="">Sin asignar</option>
+          </select>
+        </label>
+
+        <label>
+          Prioridad
+          <select id="mant_prioridad" required>
+            <option value="Baja">Baja</option>
+            <option value="Media" selected>Media</option>
+            <option value="Alta">Alta</option>
+            <option value="Crítica">Crítica</option>
+          </select>
+        </label>
+
+        <label>
+          Fecha programada
+          <input type="date" id="mant_fecha_programada">
+        </label>
+
+        <label>
+          Estado
+          <select id="mant_estado" required>
+            <option value="Abierta">Abierta</option>
+            <option value="En proceso">En proceso</option>
+            <option value="Cerrada">Cerrada</option>
+          </select>
+        </label>
+
+      </div>
+
+      <label>
+        Descripción de la falla o mantenimiento
+        <textarea id="mant_descripcion" rows="4"></textarea>
+      </label>
+
+      <div style="margin-top:20px;">
+        <button type="submit" class="btn primary">
+          Guardar orden
+        </button>
+
+        <button
+          type="button"
+          class="btn"
+          onclick="closeModal('mantenimientoModal')">
+          Cancelar
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>
 <div id="empresaModal" class="modal hidden">
 <div class="modal-box">
 <div class="modal-head"><h2 id="empresaTitle">Nueva empresa</h2><button onclick="closeModal('empresaModal')">✕</button></div>
