@@ -97,12 +97,40 @@
 </section>
 
 <section id="mantenimientos" class="view">
+
   <div class="card">
-    <h2>Mantenimientos</h2>
-    <p>La siguiente versión incorporará órdenes preventivas/correctivas, asignación de técnicos y fotos antes/después.</p>
+    <h2>Órdenes de Mantenimiento</h2>
+
+    <button class="btn primary" onclick="openMantenimiento()">
+      + Nueva orden
+    </button>
   </div>
-</section>
-</main>
+
+  <div class="card">
+    <h3>Órdenes registradas</h3>
+
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>N.º Orden</th>
+            <th>Empresa</th>
+            <th>Sede</th>
+            <th>Equipo</th>
+            <th>Tipo</th>
+            <th>Prioridad</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody id="tablaMantenimientos">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </section>
 
 <div id="empresaModal" class="modal hidden">
