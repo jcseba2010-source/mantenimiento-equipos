@@ -66,7 +66,7 @@ function renderEquipos(){
  let q=$('buscarEquipo').value.toLowerCase().trim(),fe=$('filtroEmpresa').value;
  let r=equipos.filter(e=>(!fe||e.empresa_id===fe)&&[e.codigo_interno,e.nombre,e.marca,e.ubicacion].join(' ').toLowerCase().includes(q));
  $('tablaEquipos').innerHTML=r.map(e=>{let em=empresas.find(x=>x.id===e.empresa_id),sd=sedes.find(x=>x.id===e.sede_id);return `<tr><td><b>${esc(e.codigo_interno)}</b></td><td>${esc(e.nombre)}</td><td>${esc(em?.razon_social||'-')}</td><td>${esc(sd?.nombre||'-')}</td><td>${esc(e.ubicacion||'-')}</td><td><span class="badge">${esc(e.estado)}</span></td><td>${e.proximo_mantenimiento||'-'}</td><td> <button class="btn" onclick="openEquipo('${e.id}')">Editar</button>
-<button class="btn" onclick="eliminarEquipo('${e.id}')">Eliminar</button> `}).join('');
+<button class="btn" onclick="alert('La eliminación de equipos estará disponible después de configurar el historial de mantenimiento.')">Eliminar</button> `}).join('');
 }
 async function eliminarEquipo(id){
   const equipo = equipos.find(e => e.id === id);
