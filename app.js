@@ -173,7 +173,9 @@ window.openMantenimiento = openMantenimiento;
 $('mant_empresa_id').onchange = function(){
   const empresaId = this.value;
 
-  const sedesEmpresa = sedes.filter(s => s.empresa_id === empresaId);
+  const sedesEmpresa = sedes.filter(s =>
+  String(s.empresa_id).trim() === String(empresaId).trim()
+);
 
   $('mant_sede_id').innerHTML =
     '<option value="">Seleccione sede</option>' +
