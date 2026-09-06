@@ -151,7 +151,25 @@ function openEquipo(id=''){
  if(id){let e=equipos.find(x=>x.id===id);$('equipoId').value=id;$('equipo_empresa_id').value=e.empresa_id;updateSedeSelect();$('equipo_sede_id').value=e.sede_id||'';$('codigo_interno').value=e.codigo_interno;$('equipo_nombre').value=e.nombre;$('equipo_tipo').value=e.tipo;$('equipo_marca').value=e.marca||'';$('equipo_modelo').value=e.modelo||'';$('numero_serie').value=e.numero_serie||'';$('equipo_ubicacion').value=e.ubicacion||'';$('equipo_responsable').value=e.responsable||'';$('equipo_estado').value=e.estado;$('fecha_compra').value=e.fecha_compra||'';$('ultimo_mantenimiento').value=e.ultimo_mantenimiento||'';$('proximo_mantenimiento').value=e.proximo_mantenimiento||'';$('periodicidad_dias').value=e.periodicidad_dias||'';$('equipo_observaciones').value=e.observaciones||''}
  $('equipoModal').classList.remove('hidden');
 } window.openEquipo=openEquipo;
+function openMantenimiento(){
+  $('mantenimientoForm').reset();
+  $('mantenimientoId').value = '';
+  $('mantenimientoTitle').textContent = 'Nueva orden de mantenimiento';
 
+  $('mant_empresa_id').innerHTML =
+    '<option value="">Seleccione empresa</option>' +
+    empresas.map(e => `<option value="${e.id}">${esc(e.razon_social)}</option>`).join('');
+
+  $('mant_sede_id').innerHTML =
+    '<option value="">Seleccione sede</option>';
+
+  $('mant_equipo_id').innerHTML =
+    '<option value="">Seleccione equipo</option>';
+
+  $('mantenimientoModal').classList.remove('hidden');
+}
+
+window.openMantenimiento = openMantenimiento;
 $('equipoForm').onsubmit=async e=>{
  e.preventDefault();let data={empresa_id:$('equipo_empresa_id').value,sede_id:$('equipo_sede_id').value||null,codigo_interno:$('codigo_interno').value.trim(),nombre:$('equipo_nombre').value.trim(),tipo:$('equipo_tipo').value.trim(),marca:$('equipo_marca').value.trim()||null,modelo:$('equipo_modelo').value.trim()||null,numero_serie:$('numero_serie').value.trim()||null,ubicacion:$('equipo_ubicacion').value.trim()||null,responsable:$('equipo_responsable').value.trim()||null,estado:$('equipo_estado').value,fecha_compra:$('fecha_compra').value||null,ultimo_mantenimiento:$('ultimo_mantenimiento').value||null,proximo_mantenimiento:$('proximo_mantenimiento').value||null,periodicidad_dias:$('periodicidad_dias').value?Number($('periodicidad_dias').value):null,observaciones:$('equipo_observaciones').value.trim()||null};let id=$('equipoId').value;let r=id?await sb.from('equipos').update(data).eq('id',id):await sb.from('equipos').insert(data); if(r.error){
   if(r.error.code==='23505'){
