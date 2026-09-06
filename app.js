@@ -204,8 +204,14 @@ $('mant_sede_id').onchange = function(){
 };
 $('mantenimientoForm').onsubmit = async function(e){
   e.preventDefault();
+ const numeroOrden =
+  'OT-' +
+  new Date().toISOString().slice(0,10).replaceAll('-','') +
+  '-' +
+  Date.now().toString().slice(-6);
 
   const data = {
+    numero_orden: numeroOrden,
     empresa_id: $('mant_empresa_id').value,
     sede_id: $('mant_sede_id').value,
     equipo_id: $('mant_equipo_id').value,
