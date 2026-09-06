@@ -67,6 +67,47 @@ function renderEquipos(){
  let r=equipos.filter(e=>(!fe||e.empresa_id===fe)&&[e.codigo_interno,e.nombre,e.marca,e.ubicacion].join(' ').toLowerCase().includes(q));
  $('tablaEquipos').innerHTML=r.map(e=>{let em=empresas.find(x=>x.id===e.empresa_id),sd=sedes.find(x=>x.id===e.sede_id);return `<tr><td><b>${esc(e.codigo_interno)}</b></td><td>${esc(e.nombre)}</td><td>${esc(em?.razon_social||'-')}</td><td>${esc(sd?.nombre||'-')}</td><td>${esc(e.ubicacion||'-')}</td><td><span class="badge">${esc(e.estado)}</span></td><td>${e.proximo_mantenimiento||'-'}</td><td><button class="btn" onclick="openEquipo('${e.id}')">Editar</button></td></tr>`}).join('');
 }
+async function eliminarEquipo(id){
+  const equipo = equipos.find(e => e.id === id);
+
+  if(!equipo){
+    return alert('No se encontró el equipo.');
+  }
+
+  const confirmar = confirm(
+    `¿Seguro que desea eliminar el equipo "${equipo.nombre}"?`
+  );
+
+  if(!confirmar) return;
+
+  const { count, error: checkError } = await sb
+    .from('ordenes_trabajo')
+    .select('id', { count: 'exact', head: true })
+    .eq('equipo_id', id);
+
+  if(checkError){
+    return alert('No se pudo verificar el equipo: ' + checkError.message);
+  }
+
+  if(count > 0){
+    return alert('⚠️ Este equipo tiene mantenimientos registrados y no puede eliminarse.');
+  }
+
+  const { error } = await sb
+    .from('equipos')
+    .delete()
+    .eq('id', id);
+
+  if(error){
+    return alert('No se pudo eliminar el equipo: ' + error.message);
+  }
+
+  alert('✅ Equipo eliminado correctamente.');
+  await cargarTodo();
+}
+
+window.eliminarEquipo = eliminarEquipo;
+
 $('buscarEquipo').oninput=renderEquipos;$('filtroEmpresa').onchange=renderEquipos;
 
 function closeModal(id){$(id).classList.add('hidden')} window.closeModal=closeModal;
