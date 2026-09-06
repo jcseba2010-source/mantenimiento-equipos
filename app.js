@@ -170,6 +170,36 @@ function openMantenimiento(){
 }
 
 window.openMantenimiento = openMantenimiento;
+$('mant_empresa_id').onchange = function(){
+  const empresaId = this.value;
+
+  const sedesEmpresa = sedes.filter(s => s.empresa_id === empresaId);
+
+  $('mant_sede_id').innerHTML =
+    '<option value="">Seleccione sede</option>' +
+    sedesEmpresa.map(s =>
+      `<option value="${s.id}">${esc(s.nombre)}</option>`
+    ).join('');
+
+  $('mant_equipo_id').innerHTML =
+    '<option value="">Seleccione equipo</option>';
+};
+
+$('mant_sede_id').onchange = function(){
+  const sedeId = this.value;
+  const empresaId = $('mant_empresa_id').value;
+
+  const equiposSede = equipos.filter(e =>
+    e.empresa_id === empresaId &&
+    e.sede_id === sedeId
+  );
+
+  $('mant_equipo_id').innerHTML =
+    '<option value="">Seleccione equipo</option>' +
+    equiposSede.map(e =>
+      `<option value="${e.id}">${esc(e.codigo_interno)} - ${esc(e.nombre)}</option>`
+    ).join('');
+};
 $('equipoForm').onsubmit=async e=>{
  e.preventDefault();let data={empresa_id:$('equipo_empresa_id').value,sede_id:$('equipo_sede_id').value||null,codigo_interno:$('codigo_interno').value.trim(),nombre:$('equipo_nombre').value.trim(),tipo:$('equipo_tipo').value.trim(),marca:$('equipo_marca').value.trim()||null,modelo:$('equipo_modelo').value.trim()||null,numero_serie:$('numero_serie').value.trim()||null,ubicacion:$('equipo_ubicacion').value.trim()||null,responsable:$('equipo_responsable').value.trim()||null,estado:$('equipo_estado').value,fecha_compra:$('fecha_compra').value||null,ultimo_mantenimiento:$('ultimo_mantenimiento').value||null,proximo_mantenimiento:$('proximo_mantenimiento').value||null,periodicidad_dias:$('periodicidad_dias').value?Number($('periodicidad_dias').value):null,observaciones:$('equipo_observaciones').value.trim()||null};let id=$('equipoId').value;let r=id?await sb.from('equipos').update(data).eq('id',id):await sb.from('equipos').insert(data); if(r.error){
   if(r.error.code==='23505'){
